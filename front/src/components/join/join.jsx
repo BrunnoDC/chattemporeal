@@ -1,49 +1,37 @@
-import { useRef, useEffect, useState } from "react";
-import io from "socket.io-client";
+import { useState } from "react";
+import "./join.css";
 
-export default function Join({ setChatVisibility }) {
-    const usernameRef = useRef();
-    const [socket, setSocket] = useState(null);
+function Join({ setChatVisibility }) {
+  const [username, setUsername] = useState("");
 
-    useEffect(() => {
-        console.log("Tentando conectar ao WebSocket...");
-        const newSocket = io("http://localhost:3001", {
-            transports: ["websocket"], // Força WebSocket puro
-        });
+  const handleJoin = (e) => {
+    e.preventDefault();
+    if (!username.trim()) return;
+    setChatVisibility(true);
+  };
 
-        newSocket.on("connect", () => {
-            console.log("Conectado com sucesso! ID:", newSocket.id);
-        });
+  return (
+    <div className="join-container">
+      <div className="join-card">
+        <h2 className="join-title">Bem-vindo 👋</h2>
+        <p className="join-subtitle">Entre para o chat em tempo real</p>
 
-        newSocket.on("connect_error", (err) => {
-            console.error("Erro de conexão:", err);
-        });
+        <form onSubmit={handleJoin} className="join-form">
+          <input
+            type="text"
+            placeholder="Seu nome..."
+            className="join-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
-        setSocket(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, []);
-
-    const handleSubmit = () => {
-        const username = usernameRef.current.value;
-        if (!username.trim()) return;
-
-        console.log("Usuário entrou:", username);
-        if (socket) {
-            socket.emit("join_room", username);
-        }
-
-        setChatVisibility(true);
-    };
-
-    return (
-        <div>
-            <h1>Join</h1>
-            <input type="text" ref={usernameRef} placeholder="Nome do usuário" />
-            <button onClick={handleSubmit}>Entrar</button>
-        </div>
-    );
+          <button type="submit" className="join-button">
+            Entrar no Chat
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
+export default Join;    
