@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import "./chat.css";
 
-const socket = io("http://localhost:3000");
+
+const socket = io("http://localhost:3001");
 
 function Pasta({ username }) {
   const [message, setMessage] = useState("");
